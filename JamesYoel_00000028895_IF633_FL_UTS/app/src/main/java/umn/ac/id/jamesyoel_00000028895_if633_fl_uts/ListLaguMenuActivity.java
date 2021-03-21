@@ -37,7 +37,7 @@ import java.util.LinkedList;
 
 public class ListLaguMenuActivity extends AppCompatActivity {
     private RecyclerView listLagu;
-    private final ArrayList<File> myMusic = findMusic(Environment.getExternalStorageDirectory());
+    private ArrayList<File> myMusic = new ArrayList<>();
     private ListLaguAdapter laguAdapter;
 
     @Override
@@ -70,6 +70,7 @@ public class ListLaguMenuActivity extends AppCompatActivity {
         Dexter.withActivity(this).withPermission(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new PermissionListener() {
             @Override
             public void onPermissionGranted(PermissionGrantedResponse response) {
+                myMusic = findMusic(Environment.getExternalStorageDirectory());
             }
 
             @Override
@@ -87,17 +88,22 @@ public class ListLaguMenuActivity extends AppCompatActivity {
     public ArrayList<File> findMusic(File file){
         ArrayList<File> arrayList = new ArrayList<>();
         File[] files = file.listFiles();
-        for(File singleFile: files){
-            //Log.i("DIR", "PATH" +file.getPath());
-            if(singleFile.isDirectory() && !singleFile.isHidden()){
-                arrayList.addAll(findMusic(singleFile));
-            }
-            else {
-                if(singleFile.getName().endsWith(".mp3") || singleFile.getName().endsWith(".wav")){
-                    Log.i("DIR", "SUCCESS" +singleFile.getName());
-                    arrayList.add(singleFile);
+        if(files != null && files.length > 0){
+            for(File singleFile: files){
+                Log.i("DIR", "PATH" +file.getPath());
+                if(singleFile.isDirectory() && !singleFile.isHidden()){
+                    arrayList.addAll(findMusic(singleFile));
+                }
+                else {
+                    if(singleFile.getName().endsWith(".mp3") || singleFile.getName().endsWith(".wav")){
+                        Log.i("DIR", "SUCCESS" +singleFile.getName());
+                        arrayList.add(singleFile);
+                    }
                 }
             }
+        }
+        else {
+            Log.i("FILE", "EMPTY");
         }
         return arrayList;
     }
